@@ -5,6 +5,7 @@ import 'react-slideshow-image/dist/styles.css';
 
 import { initialData } from '../../database/products';
 import { ItemCounter } from '../../components/ui';
+import { SizeSelector } from '../../components/products/SizeSelector';
 
 const product = initialData.products[0];
 
@@ -32,6 +33,11 @@ const ProductPage = () => {
               <Typography variant='subtitle2'>Cantidad</Typography>
               {/* ItemCounter */}
               <ItemCounter/>
+              {/* Slector de size */}
+              <SizeSelector 
+                //selectedSize={product.sizes[0]} 
+                sizes={product.sizes}
+              />
             </Box>
 
             {/* Agregar al carrito */}
