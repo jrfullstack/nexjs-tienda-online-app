@@ -31,7 +31,7 @@ export const ShopLayout: FC<Props> = ({children, title, pageDescription, imageFu
               <Navbar/>
         </nav>
 
-          <SideMenu/>
+        <SideMenu/>
 
         <main style={{
             margin: '80px auto',
