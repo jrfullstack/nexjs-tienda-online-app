@@ -4,9 +4,7 @@ import { ShopLayout } from '../../components/layouts/ShopLayout';
 import { CartList } from '../../components/cart/CartList';
 import { OrderSummay } from '../../components/cart/OrdenSummay';
 
-
-const CartPage = () => {
-  
+const CartPage = () => {  
 
   return (
     <ShopLayout title="Carrito - " pageDescription ="Carrito de compra de la tienda" >
