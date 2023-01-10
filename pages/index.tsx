@@ -1,11 +1,11 @@
-import { Inter } from '@next/font/google';
-
-const inter = Inter({ subsets: ['latin'] })
+import { Typography } from '@mui/material';
+import { ShopLayout } from '../components/layouts';
 
 export default function Home() {
   return (
-    <>
-      <h1>Tienda Online</h1>
-    </>
+    <ShopLayout title={'Tienda Online - Home'} pageDescription={'Encuentra los mejores productos online aqui'} >
+      <Typography variant='h1' component='h1'>Tienda</Typography>
+      <Typography variant='h2' sx={{mb: 1}}>Todos los productos</Typography>
+    </ShopLayout>
   )
 }
