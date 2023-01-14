@@ -1,14 +1,6 @@
 import { FC, useMemo, useState } from "react";
 import NextLink from "next/link";
-import {
-    Card,
-    CardActionArea,
-    CardMedia,
-    Grid,
-    Typography,
-    Box,
-    Link,
-} from "@mui/material";
+import {Card, CardActionArea, CardMedia, Grid, Typography, Box, Link,} from "@mui/material";
 import { IProduct } from "../../interfaces";
 
 interface Props {
@@ -33,7 +25,7 @@ export const ProductCard: FC<Props> = ({ product }) => {
             onMouseLeave={() => setIsHovered(false)}>
             <Card>
                 <NextLink
-                    href="/product/slug"
+                    href={`/product/${product.slug}`}
                     passHref
                     prefetch={false}
                     legacyBehavior>
