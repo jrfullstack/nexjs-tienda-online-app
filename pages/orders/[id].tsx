@@ -5,7 +5,7 @@ import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material'
 
 import { ShopLayout } from '../../components/layouts/ShopLayout';
 import { CartList } from '../../components/cart/CartList';
-import { OrderSummay } from '../../components/cart/OrdenSummay';
+import { OrderSummay } from '../../components/cart/OrderSummay';
 
 const OrderPage = () => {
 

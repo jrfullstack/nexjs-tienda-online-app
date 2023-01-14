@@ -3,7 +3,7 @@ import { Card, CardContent, Divider, Grid, Typography, Box, Button, Link } from 
 
 import { ShopLayout } from '../../components/layouts/ShopLayout';
 import { CartList } from '../../components/cart/CartList';
-import { OrderSummay } from '../../components/cart/OrdenSummay';
+import { OrderSummay } from '../../components/cart/OrderSummay';
 
 const SummaryPage = () => {
 
