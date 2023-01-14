@@ -1,89 +1,149 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UiContext } from "../../context";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 
-import { AppBar, Toolbar, Link, Typography, Box, Button, IconButton } from '@mui/material';
-import { SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
-import Badge from "@mui/material/Badge";
-
+import {
+    AppBar,
+    Toolbar,
+    Link,
+    Typography,
+    Box,
+    Button,
+    IconButton,
+    Input,
+    InputAdornment,
+    Badge,
+} from "@mui/material";
+import { ClearOutlined, SearchOutlined, ShoppingCartOutlined } from "@mui/icons-material";
 
 export const Navbar = () => {
 
-    const {asPath} = useRouter();
+    const { asPath, push } = useRouter();
     const { toggleSideMenu } = useContext(UiContext);
 
-  return (
-      <AppBar>
-          <Toolbar>
-              <NextLink href="/" passHref legacyBehavior>
-                  <Link display="flex" alignItems="center">
-                      <Typography variant="h6">Tienda |</Typography>
-                      <Typography sx={{ ml: 0.5 }}>Online</Typography>
-                  </Link>
-              </NextLink>
+    
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isSearchVisible, setIsSearchVisible] = useState(false);
 
-              <Box flex={1} />
+    const onSearchTerm = () => {
+        if (searchTerm.trim().length === 0) return;        
+        push(`/search/${searchTerm}`);
+    };   
 
-              <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                  <NextLink href="/category/men" passHref legacyBehavior>
-                      <Link>
-                          <Button
-                              color={
-                                  asPath === "/category/men"
-                                      ? "primary"
-                                      : "info"
-                              }>
-                              Hombres
-                          </Button>
-                      </Link>
-                  </NextLink>
 
-                  <NextLink href="/category/women" passHref legacyBehavior>
-                      <Link>
-                          <Button
-                              color={
-                                  asPath === "/category/women"
-                                      ? "primary"
-                                      : "info"
-                              }>
-                              Mujeres
-                          </Button>
-                      </Link>
-                  </NextLink>
+    return (
+        <AppBar>
+            <Toolbar>
+                <NextLink href="/" passHref legacyBehavior>
+                    <Link display="flex" alignItems="center">
+                        <Typography variant="h6">Tienda |</Typography>
+                        <Typography sx={{ ml: 0.5 }}>Online</Typography>
+                    </Link>
+                </NextLink>
 
-                  <NextLink href="/category/kid" passHref legacyBehavior>
-                      <Link>
-                          <Button
-                              color={
-                                  asPath === "/category/kid"
-                                      ? "primary"
-                                      : "info"
-                              }>
-                              Niños
-                          </Button>
-                      </Link>
-                  </NextLink>
-              </Box>
+                <Box flex={1} />
 
-              <Box flex={1} />
+                <Box
+                    sx={{
+                        display: isSearchVisible
+                            ? "none"
+                            : { xs: "none", sm: "block" },
+                    }}
+                    className="fadeIn">
+                    <NextLink href="/category/men" passHref legacyBehavior>
+                        <Link>
+                            <Button
+                                color={
+                                    asPath === "/category/men"
+                                        ? "primary"
+                                        : "info"
+                                }>
+                                Hombres
+                            </Button>
+                        </Link>
+                    </NextLink>
 
-              <IconButton>
-                  <SearchOutlined />
-              </IconButton>
+                    <NextLink href="/category/women" passHref legacyBehavior>
+                        <Link>
+                            <Button
+                                color={
+                                    asPath === "/category/women"
+                                        ? "primary"
+                                        : "info"
+                                }>
+                                Mujeres
+                            </Button>
+                        </Link>
+                    </NextLink>
 
-              <NextLink href="/cart" passHref legacyBehavior>
-                  <Link>
-                      <IconButton>
-                          <Badge badgeContent={2} color="secondary">
-                              <ShoppingCartOutlined />
-                          </Badge>
-                      </IconButton>
-                  </Link>
-              </NextLink>
+                    <NextLink href="/category/kid" passHref legacyBehavior>
+                        <Link>
+                            <Button
+                                color={
+                                    asPath === "/category/kid"
+                                        ? "primary"
+                                        : "info"
+                                }>
+                                Niños
+                            </Button>
+                        </Link>
+                    </NextLink>
+                </Box>
 
-              <Button onClick={toggleSideMenu}>Menú</Button>
-          </Toolbar>
-      </AppBar>
-  );
-}
+                <Box flex={1} />
+
+                {isSearchVisible ? (
+                    <Input
+                        sx={{
+                            display: { xs: "none", sm: "flex" },
+                        }}
+                        className="fadeIn"
+                        autoFocus
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyUp={(e) => e.key === "Enter" && onSearchTerm()}
+                        type="text"
+                        placeholder="Buscar..."
+                        endAdornment={
+                            <InputAdornment position="end">
+                                <IconButton
+                                    onClick={() => {
+                                        setIsSearchVisible(false);
+                                    }}>
+                                    <ClearOutlined />
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                    />
+                ) : (
+                    <IconButton
+                        onClick={() => setIsSearchVisible(true)}
+                        className="fadeIn"
+                        sx={{ display: { xs: "none", sm: "flex" } }}>
+                        <SearchOutlined />
+                    </IconButton>
+                )}
+
+                {/* Pantallas pq */}
+                <IconButton
+                    sx={{ display: { xs: "flex", sm: "none" } }}
+                    onClick={toggleSideMenu}>
+                    <SearchOutlined />
+                </IconButton>
+
+                <NextLink href="/cart" passHref legacyBehavior>
+                    <Link>
+                        <IconButton>
+                            <Badge badgeContent={2} color="secondary">
+                                <ShoppingCartOutlined />
+                            </Badge>
+                        </IconButton>
+                    </Link>
+                </NextLink>
+
+                <Button onClick={toggleSideMenu}>Menú</Button>
+            </Toolbar>
+        </AppBar>
+    );
+};

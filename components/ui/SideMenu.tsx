@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from 'react';
 import { UiContext } from "../../context";
 import { Box, Divider, Drawer, IconButton, Input, InputAdornment, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader } from "@mui/material"
 import { AccountCircleOutlined, AdminPanelSettings, CategoryOutlined, ConfirmationNumberOutlined, EscalatorWarningOutlined, FemaleOutlined, LoginOutlined, MaleOutlined, SearchOutlined, VpnKeyOutlined } from "@mui/icons-material"
@@ -11,8 +11,15 @@ interface Props {
 export const SideMenu = () => {
 
     const router = useRouter();
-
     const { toggleSideMenu, isMenuOpen } = useContext(UiContext);
+
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const onSearchTerm = () => {
+        if(searchTerm.trim().length === 0) return;
+
+        navigateTo(`/search/${searchTerm}`);
+    }
 
     const navigateTo = (url: string) => {
         toggleSideMenu();
@@ -27,17 +34,22 @@ export const SideMenu = () => {
                 backdropFilter: "blur(4px)",
                 transition: "all 0.5s ease-out",
             }}
-            onClose={toggleSideMenu}
-        >
+            onClose={toggleSideMenu}>
             <Box sx={{ width: 250, paddingTop: 5 }}>
                 <List>
                     <ListItem>
                         <Input
+                            autoFocus
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyUp={(e) => e.key === "Enter" && onSearchTerm()}
                             type="text"
                             placeholder="Buscar..."
                             endAdornment={
                                 <InputAdornment position="end">
-                                    <IconButton aria-label="toggle password visibility">
+                                    <IconButton 
+                                        onClick={onSearchTerm}
+                                    >
                                         <SearchOutlined />
                                     </IconButton>
                                 </InputAdornment>
