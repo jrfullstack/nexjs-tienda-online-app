@@ -29,42 +29,52 @@ export const CartProvider: FC<PropsWithChildren> = ({children}) => {
     }, []);
 
     useEffect(() => {
-      Cookie.set('cart', JSON.stringify(state.cart))
+      if (state.cart.length > 0) Cookie.set("cart", JSON.stringify(state.cart));
       
-    }, [state.cart])
+    }, [state.cart]);
     
 
 
     const addProductToCart = (product: ICartProduct) => {
-        const productInCart = state.cart.some(p => p._id === product._id);
-        if(!productInCart) return dispatch({type: '[Cart] - Update products un cart', payload: [...state.cart, product]})
+      const productInCart = state.cart.some(p => p._id === product._id);
+      if(!productInCart) return dispatch({type: '[Cart] - Update products un cart', payload: [...state.cart, product]})
 
-        const productInCartButDifferentSize = state.cart.some(p => p._id === product._id && p.size === product.size);
-        if(!productInCartButDifferentSize) return dispatch({type: '[Cart] - Update products un cart', payload: [...state.cart, product]})
+      const productInCartButDifferentSize = state.cart.some(p => p._id === product._id && p.size === product.size);
+      if(!productInCartButDifferentSize) return dispatch({type: '[Cart] - Update products un cart', payload: [...state.cart, product]})
 
-        // acumular
-        const updatedProducts = state.cart.map(p => {
-            if(p._id !== product._id) return p;
-            if(p.size !== product.size) return p;
+      // acumular
+      const updatedProducts = state.cart.map(p => {
+          if(p._id !== product._id) return p;
+          if(p.size !== product.size) return p;
 
-            // actualizar la cantidad
-            p.quantity +=  product.quantity;     
-            return p;
-        });
+          // actualizar la cantidad
+          p.quantity +=  product.quantity;     
+          return p;
+      });
 
-        dispatch ({type: '[Cart] - Update products un cart', payload: updatedProducts});
+      dispatch ({type: '[Cart] - Update products un cart', payload: updatedProducts});
     }
 
+    const updateCartQuantity = (product: ICartProduct) => {
+      dispatch({type: '[Cart] - Change cart quantity', payload: product});
+    }
+
+    const removeCartProduct = (product: ICartProduct) => {
+      dispatch({ type: "[Cart] - Remove product in carty", payload: product });
+        
+    };
+
     return (
-        <CartContext.Provider value={{ 
-          ...state,
+        <CartContext.Provider
+            value={{
+                ...state,
 
-          //metodos
-          addProductToCart,
-          }}
-        >
-
-          {children}
-       </CartContext.Provider>
-    )
+                //metodos
+                addProductToCart,
+                updateCartQuantity,
+                removeCartProduct,
+            }}>
+            {children}
+        </CartContext.Provider>
+    );
 }

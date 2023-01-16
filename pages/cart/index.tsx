@@ -1,10 +1,11 @@
+
 import { Card, CardContent, Divider, Grid, Typography, Box, Button } from '@mui/material';
 
 import { ShopLayout } from '../../components/layouts/ShopLayout';
 import { CartList } from '../../components/cart/CartList';
 import { OrderSummay } from '../../components/cart/OrderSummay';
 
-const CartPage = () => {  
+const CartPage = () => {    
 
   return (
     <ShopLayout title="Carrito - " pageDescription ="Carrito de compra de la tienda" >
