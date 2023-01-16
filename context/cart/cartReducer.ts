@@ -7,6 +7,15 @@ type CartActionType =
   | { type: '[Cart] - Update products un cart', payload: ICartProduct[] }
   | { type: '[Cart] - Change cart quantity', payload: ICartProduct }
   | { type: '[Cart] - Remove product in carty', payload: ICartProduct }
+  | { 
+        type: '[Cart] - Update order summary', 
+        payload: {
+            numberOfItmes: number;
+            subTotal: number;
+            tax: number;
+            total: number;
+        }
+    }
 
 
 export const cartReducer = (state: CartState, action: CartActionType): CartState => {
@@ -50,6 +59,11 @@ export const cartReducer = (state: CartState, action: CartActionType): CartState
             //     }
             //     return true;
             // })
+        }
+    case '[Cart] - Update order summary':
+        return {
+            ...state,
+            ...action.payload
         }
 
     default:
