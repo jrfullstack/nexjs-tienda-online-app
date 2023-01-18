@@ -1,0 +1,1 @@
+export { default as tiendaOnlineApi } from './tiendaOnlineApi';
