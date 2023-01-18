@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { useRouter } from "next/router";
 import NextLink from "next/link";
 import { Box, Button, Grid, TextField, Typography, Link, Chip } from "@mui/material";
 import { ErrorOutline } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 
+import { AuthContext } from "../../context";
 import { tiendaOnlineApi } from "../../api";
 import { AuthLayout } from "../../components/layouts";
 import { validations } from "../../utils";
@@ -16,29 +18,28 @@ type FormData = {
 
 const RegisterPage = () => {
 
+    const router = useRouter();
+    
+    const { registerUser } = useContext(AuthContext);
+
     const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
     const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('')
     
     const onRegisteForm = async ({ email, password, name }: FormData) => {
 
         setShowError(false);
 
-        try {
-            const { data } = await tiendaOnlineApi.post("/user/register", {
-                name,
-                email,
-                password,
-            });
+        const {hasError, message} = await registerUser(name, email, password);
 
-            const { token, user } = data;
-            console.log({ token, user });
-
-        } catch (error) {
-            console.log("Error en las credenciales");
+        if(hasError){
             setShowError(true);
-            // ocultar nuevamente el error
+            setErrorMessage(message!);
             setTimeout(() => setShowError(false), 3000);
+            return;
         }
+
+        router.replace('/');
     };
     return (
         <AuthLayout title={"Ingresar"}>
