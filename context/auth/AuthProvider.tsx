@@ -1,10 +1,12 @@
 import { FC, PropsWithChildren, useReducer, useEffect } from 'react';
-import { AuthContext, authReducer } from './';
+import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import axios from 'axios';
+
+import { AuthContext, authReducer } from './';
 
 import { tiendaOnlineApi } from '../../api';
 import { IUser } from '../../interfaces';
-import axios from 'axios';
 
 
 export interface AuthState {
@@ -20,6 +22,7 @@ const AUTH_INITIAL_STATE: AuthState = {
 export const AuthProvider: FC<PropsWithChildren> = ({children}) => {
 
     const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
+    const router = useRouter();
 
     useEffect(() => {
         checkToken();    
@@ -27,6 +30,11 @@ export const AuthProvider: FC<PropsWithChildren> = ({children}) => {
     }, [])
 
     const checkToken = async() => {
+
+        if(!Cookies.get('token')){
+            return;
+        }
+
         try {
             const { data } = await tiendaOnlineApi.get("/user/validate-token");
             const {token, user} = data;
@@ -74,15 +82,22 @@ export const AuthProvider: FC<PropsWithChildren> = ({children}) => {
             }
 
         }
-    };
+    }
+
+    const logout = () => {
+        Cookies.remove('token');
+        Cookies.remove("cart");
+        router.reload();
+    }
 
     return (
         <AuthContext.Provider
             value={{
                 ...state,
 
-                LoginUser,
+                loginUser: LoginUser,
                 registerUser,
+                logout,
             }}>
             {children}
         </AuthContext.Provider>

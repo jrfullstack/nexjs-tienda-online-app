@@ -6,7 +6,6 @@ import { ErrorOutline } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 
 import { AuthContext } from "../../context";
-import { tiendaOnlineApi } from "../../api";
 import { AuthLayout } from "../../components/layouts";
 import { validations } from "../../utils";
 
@@ -27,19 +26,20 @@ const RegisterPage = () => {
     const [errorMessage, setErrorMessage] = useState('')
     
     const onRegisteForm = async ({ email, password, name }: FormData) => {
-
         setShowError(false);
 
-        const {hasError, message} = await registerUser(name, email, password);
+        const { hasError, message } = await registerUser(name, email, password);
 
-        if(hasError){
+        if (hasError) {
             setShowError(true);
             setErrorMessage(message!);
             setTimeout(() => setShowError(false), 3000);
             return;
         }
 
-        router.replace('/');
+        // regresar a la pantalla que estaba el usuario antes del ingresar
+        const destination = router.query.p?.toString() || "/";
+        router.replace(destination);
     };
     return (
         <AuthLayout title={"Ingresar"}>
@@ -117,7 +117,11 @@ const RegisterPage = () => {
                         </Grid>
                         <Grid item xs={12} display="flex" justifyContent="end">
                             <NextLink
-                                href="/auth/login"
+                                href={
+                                    router.query.p
+                                        ? `/auth/login?p=${router.query.p}`
+                                        : "/auth/login"
+                                }
                                 passHref
                                 legacyBehavior>
                                 <Link underline="always">

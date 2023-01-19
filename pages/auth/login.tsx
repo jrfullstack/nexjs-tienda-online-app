@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     const router = useRouter();
 
-    const {LoginUser} = useContext(AuthContext);
+    const {loginUser: LoginUser} = useContext(AuthContext);
 
     const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
     const [showError, setShowError] = useState(false);
@@ -37,7 +37,9 @@ const LoginPage = () => {
             return;
         }
 
-        router.replace('/');
+        // regresar a la pantalla que estaba el usuario antes del ingresar 
+        const destination = router.query.p?.toString() || '/';
+        router.replace(destination);
     }
     
     return (
@@ -54,7 +56,7 @@ const LoginPage = () => {
                                 color="error"
                                 icon={<ErrorOutline />}
                                 className="fadeIn"
-                                sx={{ display: showError ? 'flex' : 'none'}}
+                                sx={{ display: showError ? "flex" : "none" }}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -100,7 +102,11 @@ const LoginPage = () => {
                         </Grid>
                         <Grid item xs={12} display="flex" justifyContent="end">
                             <NextLink
-                                href="/auth/register"
+                                href={
+                                    router.query.p
+                                        ? `/auth/register?p=${router.query.p}`
+                                        : "/auth/register"
+                                }
                                 passHref
                                 legacyBehavior>
                                 <Link underline="always">
