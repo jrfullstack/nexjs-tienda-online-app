@@ -1,11 +1,28 @@
 
+import { useContext, useEffect } from 'react';
 import { Card, CardContent, Divider, Grid, Typography, Box, Button } from '@mui/material';
 
+import { CartContext } from '../../context';
 import { ShopLayout } from '../../components/layouts/ShopLayout';
-import { CartList } from '../../components/cart/CartList';
-import { OrderSummay } from '../../components/cart/OrderSummay';
+import { OrderSummay, CartList } from "../../components/cart";
+import { useRouter } from 'next/router';
 
 const CartPage = () => {    
+
+  const {isLoaded, cart} = useContext(CartContext);
+
+  const router = useRouter();
+
+  useEffect(() => {
+      if (isLoaded && cart.length === 0) {
+          router.replace("/cart/empty");
+      }
+  }, [isLoaded, cart, router]);
+
+  if(!isLoaded ||cart.length === 0){
+    return (<></>);
+  }
+  
 
   return (
     <ShopLayout title="Carrito - " pageDescription ="Carrito de compra de la tienda" >
