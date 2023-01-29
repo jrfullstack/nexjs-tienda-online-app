@@ -1,25 +1,30 @@
-import { NextResponse, type NextRequest } from 'next/server';
-import * as jose from 'jose';
+import { getToken } from 'next-auth/jwt';
+import { NextResponse} from 'next/server';
+import { type NextRequest } from 'next/server';
 
 export async function middleware(req: NextRequest) {
-    const previousPage = req.nextUrl.pathname;
 
-    if (previousPage.startsWith('/checkout')) {
-        const token = req.cookies.get('token')?.value || '';
+    const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    // console.log({session})
 
-        try {
-            await jose.jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET_SEED));
-            return NextResponse.next();
-        } catch (error) {
-            return NextResponse.redirect(
-                new URL(`/auth/login?p=${previousPage}`, req.url)
-            );
-        }
+    if(!session){
+        const requestedPage = req.nextUrl.pathname;
+        const url = req.nextUrl.clone();
+        url.pathname = `/auth/login`;
+        url.search = `p=${requestedPage}`;
+
+        return NextResponse.redirect(url);
     }
+    
+    // return NextResponse.redirect(new URL('/about-2', req.url))
+
+    return NextResponse.next();
+
 };
 
 export const config = {
     matcher: [
-        '/checkout/:path*'
+        '/checkout/address', 
+        '/checkout/summary'
     ],
 };

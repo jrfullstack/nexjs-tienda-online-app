@@ -1,9 +1,12 @@
 import { useContext, useState } from "react";
 import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
 import NextLink from "next/link";
+import { getSession, signIn } from "next-auth/react";
+
+import { useForm } from "react-hook-form";
 import { Box, Button, Grid, TextField, Typography, Link, Chip } from "@mui/material";
 import { ErrorOutline } from "@mui/icons-material";
-import { useForm } from "react-hook-form";
 
 import { AuthContext } from "../../context";
 import { AuthLayout } from "../../components/layouts";
@@ -38,8 +41,11 @@ const RegisterPage = () => {
         }
 
         // regresar a la pantalla que estaba el usuario antes del ingresar
-        const destination = router.query.p?.toString() || "/";
-        router.replace(destination);
+        // const destination = router.query.p?.toString() || "/";
+        // router.replace(destination);
+
+        await signIn("credentials", { email, password });
+
     };
     return (
         <AuthLayout title={"Ingresar"}>
@@ -134,6 +140,27 @@ const RegisterPage = () => {
             </form>
         </AuthLayout>
     );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({
+    req,
+    query,
+}) => {
+    const session = await getSession({ req });
+
+    const { p = "/" } = query;
+
+    if (session) {
+        return {
+            redirect: {
+                destination: p.toString(),
+                permanent: false,
+            },
+        };
+    }
+    return {
+        props: {},
+    };
 };
 
 export default RegisterPage;
