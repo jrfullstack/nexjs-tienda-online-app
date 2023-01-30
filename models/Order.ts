@@ -4,8 +4,7 @@ import { IOrder } from '../interfaces';
 
 
 const orderSchema = new Schema({
-
-    // name: { type: String, required: true },
+    
 
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     orderItems : [{
@@ -17,15 +16,16 @@ const orderSchema = new Schema({
         image    : { type: String, required: true },
         price    : { type: Number, required: true },
     }],
+
     shippingAddress: {
-        firstName : { type: Schema.Types.ObjectId, required: true }, 
-        lastName  : { type: Schema.Types.ObjectId, required: true }, 
-        address   : { type: Schema.Types.ObjectId, required: true }, 
-        address2  : { type: Schema.Types.ObjectId }, 
-        zip       : { type: Schema.Types.ObjectId, required: true }, 
-        city      : { type: Schema.Types.ObjectId, required: true }, 
-        country   : { type: Schema.Types.ObjectId, required: true }, 
-        phone     : { type: Schema.Types.ObjectId, required: true }, 
+        firstName : { type: String, required: true }, 
+        lastName  : { type: String, required: true }, 
+        address   : { type: String, required: true }, 
+        address2  : { type: String }, 
+        zip       : { type: String, required: true }, 
+        city      : { type: String, required: true }, 
+        country   : { type: String, required: true }, 
+        phone     : { type: String, required: true }, 
     },
 
     numberOfItems : { type: Number, required: true },

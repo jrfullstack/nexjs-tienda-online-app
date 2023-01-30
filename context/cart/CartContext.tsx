@@ -1,6 +1,5 @@
 import { createContext } from 'react';
-import { ShippingAddress } from './';
-import { ICartProduct } from '../../interfaces';
+import { ICartProduct, ShippingAddress } from '../../interfaces';
 
 interface ContextProps {
     isLoaded: boolean;
@@ -10,7 +9,10 @@ interface ContextProps {
     tax: number;
     total: number;
     shippingAddress?: ShippingAddress;
-    
+
+    // Orders
+    createOrder: () => Promise<{hasError: boolean; message: string;}>;
+
     //metodos
     addProductToCart: (product: ICartProduct) => void;
     updateCartQuantity: (product: ICartProduct) => void;

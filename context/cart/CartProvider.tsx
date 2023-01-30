@@ -1,7 +1,9 @@
 import { FC, PropsWithChildren, useEffect, useReducer } from 'react';
 import Cookie from 'js-cookie';
-import { ICartProduct, ShippingAddress } from '../../interfaces';
+import { ICartProduct, IOrder, ShippingAddress } from '../../interfaces';
 import { CartContext, cartReducer } from './';
+import { tiendaOnlineApi } from '../../api';
+import axios from 'axios';
 
 
 
@@ -46,7 +48,7 @@ export const CartProvider: FC<PropsWithChildren> = ({children}) => {
       if(Cookie.get('firstName')){
 
         const shippingAddress = {
-            firstName: Cookie.get("firstName") || "",
+            firstName: Cookie.get('firstName') || "",
             lastName : Cookie.get("lastName") || "",
             address  : Cookie.get("address") || "",
             address2 : Cookie.get("address2") || "",
@@ -126,6 +128,57 @@ export const CartProvider: FC<PropsWithChildren> = ({children}) => {
 
     }
 
+    const createOrder = async(): Promise<{ hasError: boolean; message: string; }> => {
+
+      if(!state.shippingAddress){
+        throw new Error('No hay dirreccion de entrega')
+      }
+
+      const body: IOrder = {
+        orderItems     : state.cart.map(p => ({
+          ...p,
+          size: p.size!
+        })),
+        shippingAddress: state.shippingAddress,
+        numberOfItems  : state.numberOfItmes,
+        subTotal       : state.subTotal,
+        tax            :state.tax,
+        total          : state.total,
+        isPaid         : false
+      }
+
+
+      try {
+
+        const { data } = await tiendaOnlineApi.post<IOrder>("/orders", body);
+        // console.log({data});
+
+        dispatch({type: '[Cart] - Order complete'});
+
+        
+        return {
+          hasError: false,
+          message: data._id!
+        }
+
+        
+      } catch (error) {
+        // console.log(error)
+
+        if(axios.isAxiosError(error)){
+          return {
+            hasError: true,
+            message: error.response?.data.message
+          }
+        }
+
+        return {
+          hasError: true,
+          message : 'Error no controlado, hable con el administrador'
+        }
+      }
+    }
+
     return (
         <CartContext.Provider
             value={{
@@ -136,8 +189,11 @@ export const CartProvider: FC<PropsWithChildren> = ({children}) => {
                 updateCartQuantity,
                 removeCartProduct,
                 UpdateAddress,
+
+                // Orders
+                createOrder,
             }}>
             {children}
         </CartContext.Provider>
     );
-}
+};
