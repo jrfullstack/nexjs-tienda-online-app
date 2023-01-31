@@ -1,25 +1,63 @@
+import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next'
 import { getSession } from 'next-auth/react';
+import { PayPalButtons } from "@paypal/react-paypal-js";
 
-
-import { Card, CardContent, Divider, Grid, Typography, Box, Chip } from '@mui/material';
+import { Card, CardContent, Divider, Grid, Typography, Box, Chip, CircularProgress } from '@mui/material';
 import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material';
 
 import { ShopLayout } from '../../components/layouts/ShopLayout';
 import { CartList, OrderSummay } from "../../components/cart/";
 import { dbOrders } from '../../database';
 import { IOrder } from '../../interfaces';
+import { tiendaOnlineApi } from '../../api';
+import { useRouter } from 'next/router';
 
 
+export type OrderResponseBody = {
+    id: string;
+    status:
+        | "COMPLETED"
+        | "SAVED"
+        | "APPROVED"
+        | "VOIDED"
+        | "PAYER_ACTION_REQUIRED";    
+}
 
 interface Props {
     order: IOrder;
 }
 
 const OrderPage: NextPage<Props> = ({order}) => {
-    // console.log({order})
+    
+    const router = useRouter();
+
+    const [isPaying, setIsPaying] = useState(false);
 
     const {shippingAddress} = order;
+
+    const onOrderCompleted = async(details: OrderResponseBody) => {
+        if(details.status !== 'COMPLETED'){
+            return alert('No hay pago en Paypal');
+        }
+
+        setIsPaying(true);
+
+        try {
+            const {data} = await tiendaOnlineApi.post(`/orders/pay`, {
+                transactionId: details.id,
+                orderId: order._id
+            });
+
+            router.reload();
+
+        } catch (error) {
+            setIsPaying(false);
+            console.log(error);
+            alert('Error');
+
+        }
+    };
 
 
     return (
@@ -46,9 +84,6 @@ const OrderPage: NextPage<Props> = ({order}) => {
                     />
                 )
             }
-
-            
-
             
 
             <Grid container className='fadeIn'>
@@ -86,6 +121,21 @@ const OrderPage: NextPage<Props> = ({order}) => {
                             />
 
                             <Box sx={{ mt: 3 }} display='flex' flexDirection='column'>
+                                <Box 
+                                    display='flex'
+                                    justifyContent='center'
+                                    className='fadeIn'
+                                    sx={{display: isPaying ? 'flex' : 'none'}}
+                                >
+                                    <CircularProgress/>
+
+                                </Box>
+
+                                <Box 
+                                    flexDirection='column'
+                                    sx={{display: isPaying ? 'none' : 'flex', flex: 1}}
+                                >                                    
+
                                 {
                                     order.isPaid
                                     ? (
@@ -98,9 +148,31 @@ const OrderPage: NextPage<Props> = ({order}) => {
                                         />
 
                                     ):(
-                                        <h1>Pagar</h1>
+                                        <PayPalButtons 
+                                            createOrder={(data, actions) => {
+                                                return actions.order.create({
+                                                    purchase_units: [
+                                                        {
+                                                            amount: {
+                                                                value: `${order.total}`,
+                                                            },
+                                                        },
+                                                    ],
+                                                });
+                                            }}
+                                            onApprove={(data, actions) => {
+                                                return actions.order!.capture().then((details) => {
+                                                    onOrderCompleted(details);
+                                                    // const name = details.payer.name.given_name;
+                                                    // alert(`Transaction completed by ${name}`);
+                                                });
+                                            }}
+                                        
+                                        />
                                     )
                                 }
+                                </Box>
+
                                 
                             </Box>
                         </CardContent>

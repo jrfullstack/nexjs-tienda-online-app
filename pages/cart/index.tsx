@@ -25,7 +25,7 @@ const CartPage = () => {
   
 
   return (
-    <ShopLayout title="Carrito - " pageDescription ="Carrito de compra de la tienda" >
+    <ShopLayout title="Carrito " pageDescription ="Carrito de compra de la tienda" >
       <Typography variant='h1' component='h1'>Carrito</Typography>
 
       <Grid container>

@@ -12,7 +12,7 @@ import Cookies from 'js-cookie';
 const SummaryPage = () => {
 
     const router = useRouter();
-    const {shippingAddress: shippingAddres, numberOfItmes, createOrder} = useContext(CartContext);
+    const {shippingAddress, numberOfItmes, createOrder} = useContext(CartContext);
     const [isPosting, setIsPosting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     
@@ -39,11 +39,11 @@ const SummaryPage = () => {
     }
     
 
-    if(!shippingAddres){
+    if(!shippingAddress){
         return <></>;
     }
 
-    const {firstName, lastName, address, address2 = '', city, phone, zip, country} = shippingAddres;
+    const {firstName, lastName, address, address2 = '', city, phone, zip, country} = shippingAddress;
 
     return (
         <ShopLayout title="Resumen de orden" pageDescription="Resumen de la orden" >

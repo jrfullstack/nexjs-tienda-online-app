@@ -33,7 +33,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         return res.status(401).json({message: 'Debe estar autenticado para hacer esto'});
     }
 
-    // crear arrglo de productos que la persona quiere
+    // crear arreglo de productos que la persona quiere
     const productIds = orderItems.map( product => product._id);
     await db.connect();
 
@@ -61,6 +61,8 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
         const userId = session.user._id || session.user.id;
         const newOrder = new Order({...req.body, isPaid: false, user: userId});
+        newOrder.total = Math.round(newOrder.total * 100) / 100;
+
         await newOrder.save();
         await db.disconnect();
 
