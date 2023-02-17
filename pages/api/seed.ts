@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { db, seedDatabase } from '../../database';
-import { Product, User } from '../../models';
+import { Order, Product, User } from '../../models';
 
 type Data = {message: string}
 
 export default async function handler (req: NextApiRequest, res: NextApiResponse<Data>) {
 
     if( process.env.NODE_ENV === 'production' ){
-        return res.status(401).json({message: 'Mo tiene acceso a este API'})
+        return res.status(401).json({message: 'no tienes acceso a este API'})
     }
 
     await db.connect();
@@ -17,6 +17,8 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
 
     await Product.deleteMany();
     await Product.insertMany(seedDatabase.initialData.products);
+
+    await Order.deleteMany();
 
     await db.disconnect();
 

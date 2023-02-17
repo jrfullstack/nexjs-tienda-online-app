@@ -10,7 +10,6 @@ import { useForm } from 'react-hook-form';
 import { AuthLayout } from "../../components/layouts"
 import { validations } from '../../utils';
 import { useRouter } from 'next/router';
-import Product from '../../models/Product';
 
 type FormData = {
     email   : string;
@@ -52,6 +51,7 @@ const LoginPage = () => {
         // // regresar a la pantalla que estaba el usuario antes del ingresar 
         // const destination = router.query.p?.toString() || '/';
         // router.replace(destination);
+        // e.preventDefault();
         await signIn('credentials', {email, password});
     }
     
