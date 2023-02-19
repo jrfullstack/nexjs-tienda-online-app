@@ -37,7 +37,15 @@ const getProducts = async(req: NextApiRequest, res: NextApiResponse<Data>) => {
                                   .lean();
 
     await db.disconnect();
+    const updatedProducts = products.map(product => {
+        // slug en local y en la nube
+        product.images = product.images.map(image => {
+            return image.includes('http') ? image : `${process.env.NEXTAUTH_URL}/products/${image}`
+        })
 
-    return res.status(200).json(products)
+        return product;
+    })
+
+    return res.status(200).json(updatedProducts)
 
 }

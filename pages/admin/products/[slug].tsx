@@ -1,13 +1,16 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState, ChangeEvent } from "react";
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router';
 import { useForm, Controller } from "react-hook-form";
 
-import { Box, Button, capitalize, Card, CardActions, CardMedia, Checkbox, Chip, Divider, FormControl, FormControlLabel, FormGroup, FormHelperText, FormLabel, Grid, ListItem, Paper, Radio, RadioGroup, TextField } from '@mui/material';
+import { Box, Button, capitalize, Card, CardActions, CardMedia, Checkbox, Chip, Divider, FormControl, FormControlLabel, FormGroup, FormHelperText, FormLabel, Grid, Radio, RadioGroup, TextField } from '@mui/material';
 import { DriveFileRenameOutline, SaveOutlined, UploadOutlined } from '@mui/icons-material';
 
 import { AdminLayout } from '../../../components/layouts';
-import { IProduct, ISize } from '../../../interfaces';
+import { IProduct } from '../../../interfaces';
 import { dbProducts } from '../../../database';
+import { tiendaOnlineApi } from '../../../api';
+import { Product } from '../../../models';
 
 
 const validTypes  = ['shirts','pants','hoodies','hats']
@@ -33,7 +36,10 @@ interface Props {
 
 const ProductAdminPage:FC<Props> = ({ product }) => {
 
+    const router = useRouter();
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [newTagValue, setNewTagValue] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
 
     const {register, control, handleSubmit, formState:{errors}, getValues, setValue, watch} = useForm<FormData>({
         defaultValues: product
@@ -82,8 +88,53 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
         setValue('tags', updatedTags, {shouldValidate: true});
     }
 
-    const onSubmit = (form: FormData) => {
-        console.log({form})
+    const onFileSeleted = async({target}: ChangeEvent<HTMLInputElement>) => {
+        if(!target.files || target.files.length === 0){
+            return;
+        }
+
+        
+        try {
+            // console.log(file)
+            for(const file of target.files){
+                const formData = new FormData();
+                formData.append('file', file);
+                const {data} = await tiendaOnlineApi.post<{message: string}>('/admin/upload', formData);
+                // console.log(data.message)
+                setValue('images', [...getValues('images'), data.message], {shouldValidate: true});
+
+            }
+        } catch (error) {
+            
+        }
+    }
+
+    const onDeleteImage = (image:string) => {
+        setValue('images', getValues('images').filter( img => img !== image), {shouldValidate: true});
+    }
+
+    const onSubmit = async(form: FormData) => {
+        if(form.images.length < 2) return alert('Mínimo 2 imagenes');
+        setIsSaving(true);
+
+        try {
+            const {data} = await tiendaOnlineApi({
+                url: '/admin/products',
+                method: form._id ? 'PUT' : 'POST', //si tenemos un nuevo _id actualizar sino crear
+                data: form
+            });
+
+            console.log({data});
+
+            if(!form._id){
+                router.replace(`/admin/products/${form.slug}`)
+            }else {
+                setIsSaving(false);
+            }
+        } catch (error) {
+            console.log(error);
+            setIsSaving(false);
+        }
 
     }
 
@@ -98,7 +149,8 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                         color="secondary"
                         startIcon={<SaveOutlined />}
                         sx={{ width: "150px" }}
-                        type="submit">
+                        type="submit"
+                        disabled={isSaving}>
                         Guardar
                     </Button>
                 </Box>
@@ -366,8 +418,12 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                             sx={{ mb: 1 }}
                             helperText="Presiona [spacebar] para agregar"
                             value={newTagValue}
-                            onChange={({target}) => setNewTagValue(target.value)}
-                            onKeyUp={({code}) => code === 'Space' ? onNewTag() : undefined}
+                            onChange={({ target }) =>
+                                setNewTagValue(target.value)
+                            }
+                            onKeyUp={({ code }) =>
+                                code === "Space" ? onNewTag() : undefined
+                            }
                         />
 
                         <Box
@@ -401,28 +457,44 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                                 color="secondary"
                                 fullWidth
                                 startIcon={<UploadOutlined />}
-                                sx={{ mb: 3 }}>
+                                sx={{ mb: 3 }}
+                                onClick={() => fileInputRef.current?.click()}>
                                 Cargar imagen
                             </Button>
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                multiple
+                                accept="image/png, image/gif, image/jpeg"
+                                style={{ display: "none" }}
+                                onChange={onFileSeleted}
+                            />
 
                             <Chip
                                 label="Es necesario al 2 imagenes"
                                 color="error"
                                 variant="outlined"
+                                sx={{ display: getValues("images").length < 2 ? 'flex' : 'none' }}
                             />
 
                             <Grid container spacing={2}>
-                                {product.images.map((img) => (
+                                {getValues("images").map((img) => (
                                     <Grid item xs={4} sm={3} key={img}>
                                         <Card>
                                             <CardMedia
                                                 component="img"
                                                 className="fadeIn"
-                                                image={`/products/${img}`}
+                                                // image={`/products/${img}`}
+                                                image={img}
                                                 alt={img}
                                             />
                                             <CardActions>
-                                                <Button fullWidth color="error">
+                                                <Button
+                                                    fullWidth
+                                                    color="error"
+                                                    onClick={() =>
+                                                        onDeleteImage(img)
+                                                    }>
                                                     Borrar
                                                 </Button>
                                             </CardActions>
@@ -445,8 +517,19 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     
     const { slug = ''} = query;
-    
-    const product = await dbProducts.getProductBySlug(slug.toString());
+
+    let product: IProduct | null;
+
+    if(slug === 'new'){
+        // crear producto
+        const tempProduct = JSON.parse(JSON.stringify( new Product() ));
+        delete tempProduct._id;
+        tempProduct.images = ['img1.jpg', 'img2.jpg'];
+        product = tempProduct;
+    }else{
+        product = await dbProducts.getProductBySlug(slug.toString());
+    }    
+     
 
     if ( !product ) {
         return {

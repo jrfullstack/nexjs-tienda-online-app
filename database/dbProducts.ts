@@ -14,12 +14,18 @@ export const getProductBySlug = async(slug: string): Promise<IProduct | null> =>
         return null;
     }
 
-  return JSON.parse(JSON.stringify(product));
+	// slug en local y en la nube
+	product.images = product.images.map(image => {
+		return image.includes('http') ? image : `${process.env.NEXTAUTH_URL}/products/${image}`
+	})
+
+    return JSON.parse(JSON.stringify(product));
 }
 
 interface ProductSlug{
   slug: string;
 }
+
 export const getAllProductSlugs = async (): Promise<ProductSlug[]> => {
   await db.connect();
   const slugs = await Product.find().select('slug -_id').lean();
@@ -31,29 +37,48 @@ export const getAllProductSlugs = async (): Promise<ProductSlug[]> => {
 
 export const getProductsByTerm = async (term: string): Promise<IProduct[]> => {
 
-  await db.connect();
+	await db.connect();
 
-  term = term.toString().toLowerCase();
+	term = term.toString().toLowerCase();
 
-  await db.connect();
-  const products = await Product.find({
-    $text: { $search: term }
-  })
-    .select('title images price inStock slug -_id')
-    .lean();
+	await db.connect();
+	const products = await Product.find({
+		$text: { $search: term }
+	})
+		.select('title images price inStock slug -_id')
+		.lean();
 
-  await db.disconnect();
+  	await db.disconnect();
 
-  return products;
+  	const updatedProducts = products.map(product => {
+		// slug en local y en la nube
+		product.images = product.images.map(image => {
+			return image.includes('http') ? image : `${process.env.NEXTAUTH_URL}/products/${image}`
+		})
+
+		return product;
+	})
+
+
+	return updatedProducts;
 
 }
 
 export const getAllProducts = async(): Promise<IProduct[]> => {
 
-  await db.connect();
-  const products = await Product.find().lean();
-  await db.disconnect();
+	await db.connect();
+	const products = await Product.find().lean();
+	await db.disconnect();
+	
+	const updatedProducts = products.map(product => {
+		// slug en local y en la nube
+		product.images = product.images.map(image => {
+			return image.includes('http') ? image : `${process.env.NEXTAUTH_URL}/products/${image}`
+		})
 
-  return JSON.parse(JSON.stringify(products));
+		return product;
+	})
+
+	return JSON.parse(JSON.stringify(updatedProducts));
 
 }

@@ -33,8 +33,13 @@ const getProductBySlug = async (req: NextApiRequest, res: NextApiResponse<Data>)
         return res.status(404).json({
             message: 'Producto no encontrado'
         })
-
     }
+
+    product.images = product.images.map(image => {
+        return image.includes('http') ? image : `${process.env.NEXTAUTH_URL}/products/${image}`
+    })
+
+    // return product;
 
     return res.json(product);
 
