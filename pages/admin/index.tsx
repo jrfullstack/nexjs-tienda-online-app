@@ -4,6 +4,7 @@ import { Grid, Typography } from '@mui/material';
 import { AccessTimeOutlined, AttachMoneyOutlined, CancelPresentationOutlined, CategoryOutlined, CreditCardOffOutlined, DashboardOutlined, GroupOutlined, ProductionQuantityLimitsOutlined } from '@mui/icons-material'
 import { SummaryTile } from '../../components/admin';
 import { AdminLayout } from '../../components/layouts'
+import { FullScreenLoading } from '../../components/ui';
 import { DashboardSummaryResponse } from '../../interfaces';
 
 const DashboardPage = () => {
@@ -23,7 +24,7 @@ const DashboardPage = () => {
       return () => clearInterval(interval);
     }, [])
     
-    if (isLoading) return <div>loading...</div>;
+    if (isLoading) return <FullScreenLoading />;
 
     if(!error && !data) {
         <></>

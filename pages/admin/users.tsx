@@ -8,6 +8,7 @@ import { Grid, MenuItem, Select } from "@mui/material";
 import { AdminLayout } from '../../components/layouts'
 import { IUser } from '../../interfaces';
 import { tiendaOnlineApi } from '../../api';
+import { FullScreenLoading } from '../../components/ui';
 
 
 const UsersPage = () => {
@@ -22,7 +23,7 @@ const UsersPage = () => {
     }, [data])
     
 
-    if (isLoading) return <div>loading...</div>;
+    if (isLoading) return <FullScreenLoading />;
     if(!data && !error) return (<></>);
     
     const onRoleUpdated = async(userId: string, newRole: string) => {

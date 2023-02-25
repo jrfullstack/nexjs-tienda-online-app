@@ -6,6 +6,7 @@ import useSWR from "swr";
 
 import { AdminLayout } from "../../components/layouts";
 import { IProduct } from "../../interfaces";
+import { FullScreenLoading } from "../../components/ui";
 
 const columns: GridColDef[] = [
     { 
@@ -49,7 +50,7 @@ const columns: GridColDef[] = [
 const ProductsPage = () => {
     const { data, error, isLoading } = useSWR<IProduct[]>("/api/admin/products");
 
-    if (isLoading) return <div>loading...</div>;
+    if (isLoading) return <FullScreenLoading />;
     if (!data && !error) return <></>;
     console.log(data);
 

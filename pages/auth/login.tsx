@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GetServerSideProps } from 'next'
+import { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
 import { getSession, signIn, getProviders } from 'next-auth/react';
 import { Box, Button, Grid, TextField, Typography, Link, Chip, Divider } from '@mui/material';
@@ -7,9 +7,10 @@ import { ErrorOutline } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 
 
-import { AuthLayout } from "../../components/layouts"
+import { AuthLayout } from "../../components/layouts";
 import { validations } from '../../utils';
 import { useRouter } from 'next/router';
+import styles from "./login.module.css";
 
 type FormData = {
     email   : string;
@@ -128,7 +129,7 @@ const LoginPage = () => {
                             </NextLink>
                         </Grid>
 
-                        <Grid item xs={12} display="flex" flexDirection='column' justifyContent="end">
+                        {/* <Grid item xs={12} display="flex" flexDirection='column' justifyContent="end">
                             <Divider sx={{width: '100%', mb: 2 }}/>
 
                             {
@@ -151,6 +152,47 @@ const LoginPage = () => {
                                 })
                             }
 
+                        </Grid> */}
+                        <Grid
+                            item
+                            xs={12}
+                            display="flex"
+                            justifyContent="end"
+                            flexDirection="column">
+                            <Divider sx={{ width: "100%", mb: 2 }} />
+
+                            {Object.values(providers).map((provider: any) => {
+                                if (provider.id == "credentials") return null;
+
+                                let btnStyles = styles.githubBtn;
+
+                                switch (provider.id) {
+                                    case "github":
+                                        btnStyles = styles.githubBtn;
+                                        break;
+
+                                    case "facebook":
+                                        btnStyles = styles.facebookBtn;
+                                        break;
+
+                                    case "google":
+                                        btnStyles = styles.googleBtn;
+                                        break;
+                                }
+
+                                return (
+                                    <Button
+                                        key={provider.id}
+                                        variant="outlined"
+                                        fullWidth
+                                        color="primary"
+                                        sx={{ mb: 1, p: 1 }}
+                                        onClick={() => signIn(provider.id)}
+                                        className={`${btnStyles} ${styles.providerBtn}`}>
+                                        {provider.name}
+                                    </Button>
+                                );
+                            })}
                         </Grid>
                     </Grid>
                 </Box>

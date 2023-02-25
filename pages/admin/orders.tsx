@@ -4,6 +4,7 @@ import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import useSWR from "swr";
 
 import { AdminLayout } from "../../components/layouts";
+import { FullScreenLoading } from "../../components/ui";
 import { IOrder, IUser } from "../../interfaces";
 
 const columns: GridColDef[] = [
@@ -48,7 +49,7 @@ const columns: GridColDef[] = [
 const Orderspage = () => {
     const { data, error, isLoading } = useSWR<IOrder[]>("/api/admin/orders");
 	
-    if (isLoading) return <div>loading...</div>;
+    if (isLoading) return <FullScreenLoading />;
     if (!data && !error) return <></>;
 	console.log(data)
 

@@ -1,6 +1,8 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
-import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
+import FacebookProvider from "next-auth/providers/facebook";
 import { dbUsers } from "../../../database";
 
 declare module "next-auth" {
@@ -23,7 +25,7 @@ export const authOptions: NextAuthOptions = {
             },
 
             async authorize(credentials){
-                console.log({credentials})
+                // console.log({credentials})
 
                 // const user2 = {id: '1', name: 'Juan', email: 'juan@gmail.com', role: 'admin'};
 
@@ -50,6 +52,14 @@ export const authOptions: NextAuthOptions = {
             clientId: process.env.GITHUB_ID || '',
             clientSecret: process.env.GITHUB_SECRET || '',
         }),
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID || '',
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+        }),
+        FacebookProvider({
+            clientId: process.env.FACEBOOK_CLIENT_ID || '',
+            clientSecret: process.env.FACEBOOK_CLIENT_SECRET || '',
+        })
     ],
 
     // Custom Pages
