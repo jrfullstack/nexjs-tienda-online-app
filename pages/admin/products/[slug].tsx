@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState, ChangeEvent } from "react";
-import { GetServerSideProps } from 'next'
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useForm, Controller } from "react-hook-form";
 

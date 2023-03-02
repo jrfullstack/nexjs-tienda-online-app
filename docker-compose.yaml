@@ -1,7 +1,7 @@
 services:
   tiendaonlinedb:
     image: mongo:5.0.0
-    container_name: tiendaonline-database
+    container_name: tienda-app
     ports:
       - 27017:27017
     volumes:

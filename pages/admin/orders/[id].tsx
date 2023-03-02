@@ -16,9 +16,9 @@ interface Props {
 
 const OrderPage: NextPage<Props> = ({order}) => {  
     
-    const {shippingAddress} = order;
+    const {shippingAddress} = order;   
     
-
+    
 
     return (
         <AdminLayout
@@ -26,8 +26,7 @@ const OrderPage: NextPage<Props> = ({order}) => {
             subTitle={`Orden ID: ${order._id}`}
             icon={<AirplaneTicketOutlined/>}
             
-        >
-            
+        >            
 
             {order.isPaid ? (
                 <Chip

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GetServerSideProps, NextPage } from 'next'
+import { GetServerSideProps, NextPage } from 'next';
 import { getSession } from 'next-auth/react';
 import { PayPalButtons } from "@paypal/react-paypal-js";
 
