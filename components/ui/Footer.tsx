@@ -57,13 +57,15 @@ export const Footer: FC = (): ReactElement => {
                         <Typography color="black" variant="h6" sx={{ mb: 2 }}>
                             Contacto:
                         </Typography>
-                        <Typography>C/ Prta del Sol, 28013</Typography>
+                        <Typography>
+                            <b>Direccion:</b> C/ Prta del Sol, 28013
+                        </Typography>
                         <Typography>Madrid, España</Typography>
                         <Typography sx={{ mt: 2 }}>
-                            Tel: +34 915 22 99 95
+                            <b>Tel:</b> +34 915 22 99 95
                         </Typography>
                         <Typography sx={{ mt: 2, mb: 2 }}>
-                            Email: tiendaonline@gmail.com
+                            <b>Email:</b> tiendaonline@gmail.com
                         </Typography>
                     </Grid>
                     <Grid item xs={12} sm={4}>
