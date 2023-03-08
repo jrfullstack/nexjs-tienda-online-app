@@ -58,7 +58,7 @@ export const Footer: FC = (): ReactElement => {
                             Contacto:
                         </Typography>
                         <Typography>
-                            <b>Direccion:</b> C/ Prta del Sol, 28013
+                            <b>Dirección:</b> C/ Prta del Sol, 28013
                         </Typography>
                         <Typography>Madrid, España</Typography>
                         <Typography sx={{ mt: 2 }}>
