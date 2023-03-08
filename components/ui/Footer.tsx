@@ -73,7 +73,7 @@ export const Footer: FC = (): ReactElement => {
                         <Image
                             src="/store-apple.png"
                             alt="store"
-                            width={"200"}
+                            width={"190"}
                             height={"115"}
                         />
                     </Grid>
@@ -90,6 +90,3 @@ export const Footer: FC = (): ReactElement => {
         </Box>
     );
 };
-
-// export default Footer;
-// }
