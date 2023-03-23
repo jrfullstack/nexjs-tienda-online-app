@@ -52,3 +52,4 @@ CMD ["node", "server.js"]
 # linux
 # docker build -t nextjs-tienda-online .
 # docker run --name=next-tienda-app -p 80:3000 nextjs-tienda-online
+# docker save nextjs-tienda-online-final:latest > my-image.tar
