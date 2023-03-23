@@ -9,7 +9,7 @@ import { DriveFileRenameOutline, SaveOutlined, UploadOutlined } from '@mui/icons
 import { AdminLayout } from '../../../components/layouts';
 import { IProduct } from '../../../interfaces';
 import { dbProducts } from '../../../database';
-import { tiendaOnlineApi } from '../../../api';
+import { tiendaOnlineApi } from '../../../api2';
 import { Product } from '../../../models';
 
 

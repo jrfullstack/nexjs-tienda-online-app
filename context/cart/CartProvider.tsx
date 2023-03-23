@@ -2,7 +2,7 @@ import { FC, PropsWithChildren, useEffect, useReducer } from 'react';
 import Cookie from 'js-cookie';
 import { ICartProduct, IOrder, ShippingAddress } from '../../interfaces';
 import { CartContext, cartReducer } from './';
-import { tiendaOnlineApi } from '../../api';
+import { tiendaOnlineApi } from '../../api2';
 import axios from 'axios';
 
 

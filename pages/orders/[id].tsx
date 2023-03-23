@@ -10,7 +10,7 @@ import { ShopLayout } from '../../components/layouts/ShopLayout';
 import { CartList, OrderSummay } from "../../components/cart/";
 import { dbOrders } from '../../database';
 import { IOrder } from '../../interfaces';
-import { tiendaOnlineApi } from '../../api';
+import { tiendaOnlineApi } from '../../api2';
 import { useRouter } from 'next/router';
 
 

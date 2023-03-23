@@ -7,7 +7,7 @@ import { Grid, MenuItem, Select } from "@mui/material";
 
 import { AdminLayout } from '../../components/layouts'
 import { IUser } from '../../interfaces';
-import { tiendaOnlineApi } from '../../api';
+import { tiendaOnlineApi } from '../../api2';
 import { FullScreenLoading } from '../../components/ui';
 
 
