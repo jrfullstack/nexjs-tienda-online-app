@@ -52,7 +52,7 @@ const ProductsPage = () => {
 
     if (isLoading) return <FullScreenLoading />;
     if (!data && !error) return <></>;
-    console.log(data);
+    // console.log(data);
 
     const rows = data!.map((product) => ({
         id: product._id,

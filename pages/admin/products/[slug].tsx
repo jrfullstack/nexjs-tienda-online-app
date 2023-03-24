@@ -524,7 +524,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
         // crear producto
         const tempProduct = JSON.parse(JSON.stringify( new Product() ));
         delete tempProduct._id;
-        tempProduct.images = ['img1.jpg', 'img2.jpg'];
+        tempProduct.images = ['/img1.jpg', '/img2.jpg'];
         product = tempProduct;
     }else{
         product = await dbProducts.getProductBySlug(slug.toString());
